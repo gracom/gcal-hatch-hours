@@ -81,6 +81,13 @@ function shadeColumn(col) {
 
 function render() {
   scheduled = false;
+  // After the extension is reloaded or updated, the copy of this script left
+  // in an open tab is orphaned; stop it so it doesn't fight the new copy.
+  if (!chrome.runtime?.id) {
+    observer.disconnect();
+    window.removeEventListener("resize", scheduleRender);
+    return;
+  }
   if (!settings) return;
   for (const col of timeGridColumns()) shadeColumn(col);
 }
