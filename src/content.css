@@ -1,0 +1,11 @@
+.gsh-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.gsh-band {
+  position: absolute;
+  left: 0;
+  right: 0;
+}

@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title data-i18n="extName"></title>
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <main>
+    <h1 data-i18n="extName"></h1>
+
+    <section>
+      <h2 data-i18n="modeHeading"></h2>
+      <label class="radio"><input type="radio" name="mode" value="daily"> <span data-i18n="modeDaily"></span></label>
+      <label class="radio"><input type="radio" name="mode" value="weekly"> <span data-i18n="modeWeekly"></span></label>
+    </section>
+
+    <section id="daily-section">
+      <h2 data-i18n="rangesHeading"></h2>
+      <div class="day" id="daily"></div>
+    </section>
+
+    <section id="weekly-section">
+      <h2 data-i18n="rangesHeading"></h2>
+      <div id="weekly"></div>
+    </section>
+
+    <p class="hint" data-i18n="overnightHint"></p>
+
+    <section>
+      <h2 data-i18n="lookHeading"></h2>
+      <label class="field"><span data-i18n="color"></span> <input type="color" id="color"></label>
+      <label class="field"><span data-i18n="opacity"></span> <input type="range" id="opacity" min="0.05" max="0.8" step="0.05"> <output id="opacity-value"></output></label>
+    </section>
+
+    <p id="status" role="status"></p>
+  </main>
+
+  <template id="range-row">
+    <div class="range">
+      <input type="time" class="start" step="900">
+      <span>–</span>
+      <input type="time" class="end" step="900">
+      <button type="button" class="remove" data-i18n-title="removeRange">×</button>
+    </div>
+  </template>
+
+  <script src="settings.js"></script>
+  <script src="options.js"></script>
+</body>
+</html>
