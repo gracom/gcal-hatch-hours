@@ -87,7 +87,8 @@ Shades user-chosen hours in Google Calendar's day and week views so that the hou
 | 権限 | 理由（英語で入力） |
 |---|---|
 | `storage` | Saves the user's shading settings (hours, pattern, color, opacity) and syncs them across the user's own Chrome browsers via chrome.storage.sync. |
-| ホストへのアクセス `https://calendar.google.com/*`（コンテンツスクリプト） | The content script draws the shaded bands on Google Calendar's time grid. It runs only on calendar.google.com and reads only the date attribute of each day column. |
+| `scripting` | When the extension is installed or updated, it injects its own bundled content script into Google Calendar tabs that are already open, so the user does not have to reload them. |
+| ホストへのアクセス `https://calendar.google.com/*` | The content script draws the shaded bands on Google Calendar's time grid. It runs only on calendar.google.com and reads only the date attribute of each day column. |
 
 ### リモートコードの使用
 
