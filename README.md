@@ -17,6 +17,15 @@ Shades the hours you don't use in Google Calendar's day and week views.
 1. 「パッケージ化されていない拡張機能を読み込む」で `src/` フォルダを選ぶ
 1. ツールバーの拡張機能アイコンをクリックすると設定画面が開く
 
+## アイコン
+
+元データは [`tools/icon.svg`](tools/icon.svg)（このリポジトリのために単純な図形で描いたもの）。
+直したら、リポジトリのルートで次を実行して `src/icons/` のPNGを作り直す。
+
+```bash
+uv run --with resvg-py python tools/make_icons.py
+```
+
 ## しくみ
 
 Googleカレンダーのクラス名は難読化されていて更新のたびに変わるため、使っていない。
