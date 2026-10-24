@@ -1,8 +1,8 @@
-# gcal-shade-hours
+# gcal-hatch-hours
 
 Googleカレンダー（Web版）の日・週表示で、使わない時間帯を網掛けにするChrome拡張機能。
 
-Shades the hours you don't use in Google Calendar's day and week views.
+Hatch Hours for Google Calendar: shades the hours you don't use in Google Calendar's day and week views.
 
 ## できること
 

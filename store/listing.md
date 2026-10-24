@@ -16,7 +16,7 @@
 
 ### 名前（`extName`）
 
-時間帯の網掛け for Google カレンダー
+斜線アワー for Google カレンダー
 
 ### 短い説明（`extDescription`・132文字以内）
 
@@ -48,7 +48,7 @@ Webのカレンダーは24時間がすべて同じ見た目で並ぶので、夜
 
 ### Name (`extName`)
 
-Shade Hours for Google Calendar
+Hatch Hours for Google Calendar
 
 ### Short description (`extDescription`, up to 132 characters)
 
@@ -56,7 +56,7 @@ Shades the hours you don't use in Google Calendar's day and week views.
 
 ### Detailed description
 
-Shade Hours adds a shaded band over the hours you don't use, such as while you sleep, in Google Calendar's day and week views.
+Hatch Hours adds a shaded band over the hours you don't use, such as while you sleep, in Google Calendar's day and week views.
 
 The web calendar draws all 24 hours the same way, so when you are looking around midnight it is easy to miss what is coming up during the day. With the off hours shaded, you can tell at a glance which part of the day you are looking at.
 

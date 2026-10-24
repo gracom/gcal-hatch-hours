@@ -1,5 +1,5 @@
 {
-  "extName": { "message": "Shade Hours for Google Calendar" },
+  "extName": { "message": "Hatch Hours for Google Calendar" },
   "extDescription": { "message": "Shades the hours you don't use in Google Calendar's day and week views." },
   "actionTitle": { "message": "Set shaded hours" },
   "modeHeading": { "message": "Schedule" },

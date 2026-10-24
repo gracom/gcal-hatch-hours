@@ -1,5 +1,5 @@
 {
-  "extName": { "message": "時間帯の網掛け for Google カレンダー" },
+  "extName": { "message": "斜線アワー for Google カレンダー" },
   "extDescription": { "message": "Googleカレンダーの日・週表示で、使わない時間帯を網掛けにします。" },
   "actionTitle": { "message": "網掛けする時間帯を設定" },
   "modeHeading": { "message": "時間帯の決め方" },
