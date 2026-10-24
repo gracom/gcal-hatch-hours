@@ -14,6 +14,7 @@
   "removeRange": { "message": "Remove these hours" },
   "copyToAll": { "message": "Copy to all days" },
   "saved": { "message": "Saved" },
+  "saveFailed": { "message": "Could not save" },
   "sun": { "message": "Sunday" },
   "mon": { "message": "Monday" },
   "tue": { "message": "Tuesday" },

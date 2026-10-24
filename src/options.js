@@ -17,10 +17,15 @@ let saveTimer;
 function scheduleSave() {
   clearTimeout(saveTimer);
   saveTimer = setTimeout(async () => {
-    await gshSaveSettings(settings);
     const status = document.getElementById("status");
-    status.textContent = msg("saved");
-    setTimeout(() => (status.textContent = ""), 1500);
+    try {
+      await gshSaveSettings(settings);
+      status.textContent = msg("saved");
+      setTimeout(() => (status.textContent = ""), 1500);
+    } catch (e) {
+      // Most likely the chrome.storage.sync per-item quota.
+      status.textContent = `${msg("saveFailed")} (${e.message})`;
+    }
   }, 300);
 }
 

@@ -11,8 +11,28 @@ const GSH_DEFAULTS = {
   opacity: 0.25,
 };
 
-function gshLoadSettings() {
-  return chrome.storage.sync.get(GSH_DEFAULTS);
+async function gshLoadSettings() {
+  return gshSanitize(await chrome.storage.sync.get(GSH_DEFAULTS));
+}
+
+// Stored values are not trusted to have the expected shape: anything malformed
+// falls back to the default so that rendering never throws.
+function gshSanitize(raw) {
+  const minutes = (v) => Number.isInteger(v) && v >= 0 && v <= 1440;
+  const ranges = (list, fallback) =>
+    Array.isArray(list)
+      ? list.filter((r) => r && minutes(r.start) && minutes(r.end)).map((r) => ({ start: r.start, end: r.end }))
+      : structuredClone(fallback);
+
+  const weekly = Array.isArray(raw.weekly) && raw.weekly.length === 7 ? raw.weekly : GSH_DEFAULTS.weekly;
+  const opacity = Number(raw.opacity);
+  return {
+    mode: raw.mode === "weekly" ? "weekly" : "daily",
+    daily: ranges(raw.daily, GSH_DEFAULTS.daily),
+    weekly: weekly.map((list, i) => ranges(list, GSH_DEFAULTS.weekly[i])),
+    color: /^#[0-9a-f]{6}$/i.test(raw.color) ? raw.color : GSH_DEFAULTS.color,
+    opacity: opacity >= 0 && opacity <= 1 ? opacity : GSH_DEFAULTS.opacity,
+  };
 }
 
 function gshSaveSettings(settings) {
