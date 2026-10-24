@@ -7,8 +7,9 @@ const GSH_DEFAULTS = {
   daily: [{ start: 0, end: 7 * 60 }],
   // Index 0 = Sunday, matching Date.prototype.getDay().
   weekly: Array.from({ length: 7 }, () => [{ start: 0, end: 7 * 60 }]),
+  pattern: "hatch", // "hatch" | "solid"
   color: "#7f7f7f",
-  opacity: 0.25,
+  opacity: 0.35,
 };
 
 async function gshLoadSettings() {
@@ -30,6 +31,7 @@ function gshSanitize(raw) {
     mode: raw.mode === "weekly" ? "weekly" : "daily",
     daily: ranges(raw.daily, GSH_DEFAULTS.daily),
     weekly: weekly.map((list, i) => ranges(list, GSH_DEFAULTS.weekly[i])),
+    pattern: raw.pattern === "solid" ? "solid" : "hatch",
     color: /^#[0-9a-f]{6}$/i.test(raw.color) ? raw.color : GSH_DEFAULTS.color,
     opacity: opacity >= 0 && opacity <= 1 ? opacity : GSH_DEFAULTS.opacity,
   };

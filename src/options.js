@@ -128,6 +128,14 @@ async function init() {
     });
   }
 
+  for (const radio of document.querySelectorAll('input[name="pattern"]')) {
+    radio.checked = radio.value === settings.pattern;
+    radio.addEventListener("change", () => {
+      settings.pattern = radio.value;
+      scheduleSave();
+    });
+  }
+
   const color = document.getElementById("color");
   color.value = settings.color;
   color.addEventListener("input", () => {

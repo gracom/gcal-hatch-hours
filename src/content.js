@@ -29,11 +29,32 @@ function bandsSignature(intervals) {
   return `${settings.color}|${settings.opacity}|${intervals.map((i) => i.join("-")).join(",")}`;
 }
 
+// Size in px of one repeat of the diagonal-stripe tile.
+const HATCH_TILE = 12;
+
+function styleBand(band, col, start) {
+  const { color, opacity } = settings;
+  band.style.opacity = opacity;
+  if (settings.pattern === "solid") {
+    band.style.background = color;
+    return;
+  }
+  // A light fill under darker stripes. The tile is offset by the band's
+  // position in the grid so that stripes line up across days and bands.
+  const x = col.offsetLeft;
+  const y = Math.round((col.offsetHeight * start) / 1440);
+  band.style.backgroundColor = `color-mix(in srgb, ${color} 35%, transparent)`;
+  band.style.backgroundImage = `linear-gradient(135deg, ${color} 25%, transparent 25%, transparent 50%, ${color} 50%, ${color} 75%, transparent 75%)`;
+  band.style.backgroundSize = `${HATCH_TILE}px ${HATCH_TILE}px`;
+  band.style.backgroundPosition = `${-x}px ${-y}px`;
+}
+
 function shadeColumn(col) {
   const weekday = weekdayFromDatekey(col.dataset.datekey);
   if (weekday === null) return;
   const intervals = gshIntervalsFor(settings, weekday);
-  const signature = bandsSignature(intervals);
+  // Geometry is part of the signature because the hatch offset depends on it.
+  const signature = `${bandsSignature(intervals)}|${settings.pattern}|${col.offsetLeft}x${col.offsetHeight}`;
 
   let layer = col.querySelector(":scope > .gsh-layer");
   if (layer && layer.dataset.signature === signature) return;
@@ -52,8 +73,7 @@ function shadeColumn(col) {
       band.className = "gsh-band";
       band.style.top = `${(start / 1440) * 100}%`;
       band.style.height = `${((end - start) / 1440) * 100}%`;
-      band.style.background = settings.color;
-      band.style.opacity = settings.opacity;
+      styleBand(band, col, start);
       return band;
     })
   );
@@ -85,6 +105,9 @@ const observer = new MutationObserver((mutations) => {
     return;
   }
 });
+
+// Column widths change with the window, which moves the hatch offsets.
+window.addEventListener("resize", scheduleRender);
 
 chrome.storage.onChanged.addListener(async (_changes, area) => {
   if (area !== "sync") return;
