@@ -26,14 +26,14 @@ function gshSanitize(raw) {
       : structuredClone(fallback);
 
   const weekly = Array.isArray(raw.weekly) && raw.weekly.length === 7 ? raw.weekly : GSH_DEFAULTS.weekly;
-  const opacity = Number(raw.opacity);
+  const opacity = raw.opacity;
   return {
     mode: raw.mode === "weekly" ? "weekly" : "daily",
     daily: ranges(raw.daily, GSH_DEFAULTS.daily),
     weekly: weekly.map((list, i) => ranges(list, GSH_DEFAULTS.weekly[i])),
     pattern: raw.pattern === "solid" ? "solid" : "hatch",
     color: /^#[0-9a-f]{6}$/i.test(raw.color) ? raw.color : GSH_DEFAULTS.color,
-    opacity: opacity >= 0 && opacity <= 1 ? opacity : GSH_DEFAULTS.opacity,
+    opacity: typeof opacity === "number" && opacity >= 0 && opacity <= 1 ? opacity : GSH_DEFAULTS.opacity,
   };
 }
 

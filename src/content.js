@@ -25,8 +25,12 @@ function timeGridColumns() {
   );
 }
 
-function bandsSignature(intervals) {
-  return `${settings.color}|${settings.opacity}|${intervals.map((i) => i.join("-")).join(",")}`;
+// Everything the column's bands depend on. Geometry is included because the
+// hatch offset depends on it.
+function columnSignature(col, intervals) {
+  const { color, opacity, pattern } = settings;
+  const ranges = intervals.map((i) => i.join("-")).join(",");
+  return `${color}|${opacity}|${pattern}|${ranges}|${col.offsetLeft}x${col.offsetHeight}`;
 }
 
 // Size in px of one repeat of the diagonal-stripe tile.
@@ -53,8 +57,7 @@ function shadeColumn(col) {
   const weekday = weekdayFromDatekey(col.dataset.datekey);
   if (weekday === null) return;
   const intervals = gshIntervalsFor(settings, weekday);
-  // Geometry is part of the signature because the hatch offset depends on it.
-  const signature = `${bandsSignature(intervals)}|${settings.pattern}|${col.offsetLeft}x${col.offsetHeight}`;
+  const signature = columnSignature(col, intervals);
 
   let layer = col.querySelector(":scope > .gsh-layer");
   if (layer && layer.dataset.signature === signature) return;
@@ -98,12 +101,20 @@ function scheduleRender() {
   requestAnimationFrame(render);
 }
 
+// Whether a mutation at `target` can affect the time grid: inside the main
+// area, or above it (the main area itself being replaced). Popups, hover
+// cards and side panels live outside it.
+function mayAffectGrid(target) {
+  const main = document.querySelector('[role="main"]');
+  return !main || main.contains(target) || target.contains(main);
+}
+
 // Calendar re-renders the grid on navigation and view changes, dropping our
 // layers. Mutations caused by our own layers are ignored to avoid a loop.
 const observer = new MutationObserver((mutations) => {
   for (const m of mutations) {
     const target = m.target instanceof Element ? m.target : m.target.parentElement;
-    if (target && target.closest(".gsh-layer")) continue;
+    if (!target || target.closest(".gsh-layer") || !mayAffectGrid(target)) continue;
     const ours = [...m.addedNodes, ...m.removedNodes].every(
       (n) => n instanceof Element && n.classList.contains("gsh-layer")
     );

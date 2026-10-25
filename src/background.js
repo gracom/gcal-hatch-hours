@@ -4,8 +4,10 @@ chrome.action.onClicked.addListener(() => {
 
 // Chrome injects content scripts only into pages loaded after the extension
 // is installed or updated, so calendar tabs that are already open would stay
-// unshaded until reloaded. Inject into them directly instead.
-chrome.runtime.onInstalled.addListener(async () => {
+// unshaded until reloaded. Inject into them directly instead. Other reasons
+// (such as a Chrome update) leave the running content scripts in place.
+chrome.runtime.onInstalled.addListener(async ({ reason }) => {
+  if (reason !== "install" && reason !== "update") return;
   const tabs = await chrome.tabs.query({ url: "https://calendar.google.com/*" });
   for (const tab of tabs) {
     const target = { tabId: tab.id };

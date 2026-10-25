@@ -3,9 +3,6 @@ const msg = (key) => chrome.i18n.getMessage(key) || key;
 for (const el of document.querySelectorAll("[data-i18n]")) {
   el.textContent = msg(el.dataset.i18n);
 }
-for (const el of document.querySelectorAll("[data-i18n-title]")) {
-  el.title = msg(el.dataset.i18nTitle);
-}
 
 // Weekday order shown to the user: Monday first. Values are getDay() indices.
 const WEEK_ORDER = [1, 2, 3, 4, 5, 6, 0];
@@ -13,13 +10,20 @@ const DAY_KEYS = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
 
 let settings;
 let saveTimer;
+// True from an edit until its save has been written.
+let savePending = false;
+// The settings as we last wrote them, to recognize our own change events.
+let lastSaved = "";
 
 function scheduleSave() {
+  savePending = true;
   clearTimeout(saveTimer);
   saveTimer = setTimeout(async () => {
     const status = document.getElementById("status");
     try {
+      lastSaved = JSON.stringify(settings);
       await gshSaveSettings(settings);
+      savePending = false;
       status.textContent = msg("saved");
       setTimeout(() => (status.textContent = ""), 1500);
     } catch (e) {
@@ -113,12 +117,26 @@ function renderMode() {
   document.getElementById("weekly-section").hidden = settings.mode !== "weekly";
 }
 
-async function init() {
-  settings = await gshLoadSettings();
+const colorInput = document.getElementById("color");
+const opacityInput = document.getElementById("opacity");
+const opacityValue = document.getElementById("opacity-value");
 
+// Fills every control from `settings`.
+function renderAll() {
   renderMode();
   renderRanges(document.getElementById("daily"), settings.daily);
   renderWeekly();
+  for (const radio of document.querySelectorAll('input[name="pattern"]')) {
+    radio.checked = radio.value === settings.pattern;
+  }
+  colorInput.value = settings.color;
+  opacityInput.value = settings.opacity;
+  opacityValue.textContent = `${Math.round(settings.opacity * 100)}%`;
+}
+
+async function init() {
+  settings = await gshLoadSettings();
+  renderAll();
 
   for (const radio of document.querySelectorAll('input[name="mode"]')) {
     radio.addEventListener("change", () => {
@@ -129,28 +147,34 @@ async function init() {
   }
 
   for (const radio of document.querySelectorAll('input[name="pattern"]')) {
-    radio.checked = radio.value === settings.pattern;
     radio.addEventListener("change", () => {
       settings.pattern = radio.value;
       scheduleSave();
     });
   }
 
-  const color = document.getElementById("color");
-  color.value = settings.color;
-  color.addEventListener("input", () => {
-    settings.color = color.value;
+  colorInput.addEventListener("input", () => {
+    settings.color = colorInput.value;
     scheduleSave();
   });
 
-  const opacity = document.getElementById("opacity");
-  const opacityValue = document.getElementById("opacity-value");
-  opacity.value = settings.opacity;
-  opacityValue.textContent = `${Math.round(settings.opacity * 100)}%`;
-  opacity.addEventListener("input", () => {
-    settings.opacity = Number(opacity.value);
+  opacityInput.addEventListener("input", () => {
+    settings.opacity = Number(opacityInput.value);
     opacityValue.textContent = `${Math.round(settings.opacity * 100)}%`;
     scheduleSave();
+  });
+
+  // Settings changed elsewhere (another device via sync, or another options
+  // tab) must replace ours, or our next save would write the stale copy back.
+  // Our own saves come back here too and are ignored, as is anything that
+  // arrives while an edit here is still waiting to be saved.
+  chrome.storage.onChanged.addListener(async (_changes, area) => {
+    if (area !== "sync" || savePending) return;
+    const latest = await gshLoadSettings();
+    const json = JSON.stringify(latest);
+    if (savePending || json === lastSaved || json === JSON.stringify(settings)) return;
+    settings = latest;
+    renderAll();
   });
 }
 
