@@ -104,4 +104,4 @@ Shades user-chosen hours in Google Calendar's day and week views so that the hou
 
 ### プライバシー ポリシー
 
-データを収集しない拡張機能でも、URLの欄が求められる場合がある。そのときは `store/privacy.md` を公開して、そのURLを入れる。
+URL: https://github.com/gracom/gcal-hatch-hours/blob/main/store/privacy.md
